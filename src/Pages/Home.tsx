@@ -15,19 +15,37 @@ interface PokemonDetails {
 const Home = () => {
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [pokemonDetails, setPokemonDetails] = useState<PokemonDetails[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [resultsPerPage, setResultsPerPage] = useState(10);
+  const [totalResults, setTotalResults] = useState(0);
 
   useEffect(() => {
     const fetchPokemonList = async () => {
       try {
-        const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=20');
+        const url = `https://pokeapi.co/api/v2/pokemon?limit=${resultsPerPage}&offset=${(currentPage - 1) * resultsPerPage}`
+        const response = await axios.get(url);
         setPokemonList(response.data.results);
+        setTotalResults(response.data.count);
       } catch (error) {
         console.error('Error fetching Pokémon list:', error);
       }
     };
 
     fetchPokemonList();
-  }, []);
+  }, [currentPage, resultsPerPage]);
+
+  // useEffect(() => {
+  //   const fetchPokemonList = async () => {
+  //     try {
+  //       const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=20');
+  //       setPokemonList(response.data.results);
+  //     } catch (error) {
+  //       console.error('Error fetching Pokémon list:', error);
+  //     }
+  //   };
+
+  //   fetchPokemonList();
+  // }, []);
 
   useEffect(() => {
     const fetchPokemonDetails = async () => {
@@ -52,9 +70,34 @@ const Home = () => {
     }
   }, [pokemonList]);
   console.log(pokemonList)
+
+  const handlePreviousPage = () => {
+    setCurrentPage((prevPage) => prevPage - 1);
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
   return (
     <>
     <div className="container mx-auto p-2 justify-center">
+    <div className="flex justify-center mt-4">
+        <button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          className="px-4 py-2 mr-2 bg-blue-500 text-white rounded"
+        >
+          Previous
+        </button>
+        <span className="mx-4">{`Show ${resultsPerPage} results`}</span>
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage === Math.ceil(totalResults / resultsPerPage)}
+          className="px-4 py-2 ml-2 bg-blue-500 text-white rounded"
+        >
+          Next
+        </button>
+      </div>
       <h1 className="text-2xl font-bold text-center mt-8">Pokémon List</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mt-8">
         {pokemonDetails.map((pokemon) => (
