@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import PokemonCard from '../Components/PokemonCard';
 
 interface Pokemon {
   name: string;
@@ -69,7 +70,6 @@ const Home = () => {
       fetchPokemonDetails();
     }
   }, [pokemonList]);
-  console.log(pokemonList)
 
   const handlePreviousPage = () => {
     setCurrentPage((prevPage) => prevPage - 1);
@@ -78,6 +78,7 @@ const Home = () => {
   const handleNextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
   };
+  console.log(totalResults)
   return (
     <>
     <div className="container mx-auto p-2 justify-center">
@@ -89,7 +90,10 @@ const Home = () => {
         >
           Previous
         </button>
-        <span className="mx-4">{`Show ${resultsPerPage} results`}</span>
+        <div className='flex flex-col items-center'>
+          <span className="mx-4">{`Show ${resultsPerPage} results`}</span>
+          <span className="mx-4">{`Page ${currentPage}`}</span>
+        </div>
         <button
           onClick={handleNextPage}
           disabled={currentPage === Math.ceil(totalResults / resultsPerPage)}
@@ -101,17 +105,7 @@ const Home = () => {
       <h1 className="text-2xl font-bold text-center mt-8">Pokémon List</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mt-8">
         {pokemonDetails.map((pokemon) => (
-          <div key={pokemon.name} className="border border-gray-300 p-4 rounded">
-            <img src={pokemon.image} alt={pokemon.name} className="object-cover h-48 w-48 mx-auto mb-4" />
-            <h2 className="text-lg font-bold text-left">{pokemon.name}</h2>
-            <ul className="flex gap-2 mt-2">
-              {pokemon.traits.map((trait, index) => (
-                <li key={index} className="text-center bg-gray-200 px-4 py-2 rounded-lg	">
-                  {trait}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <PokemonCard key={pokemon.name} pokemon={pokemon} />
         ))}
       </div>
     </div>
