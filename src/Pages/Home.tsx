@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import PokemonCard from '../Components/PokemonCard';
+import { Link } from 'react-router-dom';
 
 interface Pokemon {
   name: string;
@@ -78,7 +79,6 @@ const Home = () => {
   const handleNextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
   };
-  console.log(totalResults)
   return (
     <>
     <div className="container mx-auto p-2 justify-center">
@@ -105,7 +105,9 @@ const Home = () => {
       <h1 className="text-2xl font-bold text-center mt-8">Pokémon List</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mt-8">
         {pokemonDetails.map((pokemon) => (
-          <PokemonCard key={pokemon.name} pokemon={pokemon} />
+          <Link key={pokemon.name} to={`pokemon/${pokemon.name}`}>
+            <PokemonCard pokemon={pokemon} />
+          </Link>
         ))}
       </div>
     </div>
